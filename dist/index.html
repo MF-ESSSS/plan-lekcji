@@ -8,4 +8,18 @@
 </header><main id="scroll"><div id="calendar"></div></main>
 <div class="add-reference" aria-hidden="true">+</div>
 <footer aria-label="Kalendarz"><div class="nav-item" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M3 19L20 4L37 19M8 17V36H17V25H24V36H33V17"/></svg><span>Start</span></div><div class="nav-item selected"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 9H34V36H6ZM6 16H34M12 3V12M28 3V12"/><path d="M12 22H15M20 22H23M28 22H29M12 29H15M20 29H23M28 29H29"/></svg><span>Kalendarz</span></div><div class="nav-item" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M8 29H32L28 23V15C28 3 12 3 12 15V23ZM16 34Q20 40 24 34"/></svg><span class="lock"><svg viewBox="0 0 20 20"><path d="M5 9H15V17H5ZM7 9V5C7 1 13 1 13 5V9M10 12V14"/></svg></span><span>Powiadomienia</span></div><div class="nav-item" aria-hidden="true"><svg viewBox="0 0 40 40"><rect x="3" y="9" width="34" height="25" rx="3"/><path d="M4 10L20 24L36 10"/></svg><span class="lock"><svg viewBox="0 0 20 20"><path d="M5 9H15V17H5ZM7 9V5C7 1 13 1 13 5V9M10 12V14"/></svg></span><span>Wiadomości</span></div><div class="nav-item" aria-hidden="true"><svg class="more" viewBox="0 0 40 40"><circle cx="20" cy="9" r="3"/><circle cx="20" cy="21" r="3"/><circle cx="20" cy="33" r="3"/></svg><span>Więcej</span></div></footer>
+<div id="editor" class="editor-overlay" hidden>
+<section class="editor-panel" role="dialog" aria-modal="true" aria-labelledby="editor-title">
+<div class="editor-heading"><h2 id="editor-title">Edytuj plan lekcji</h2><button id="close-editor" type="button" aria-label="Zamknij edytor">×</button></div>
+<p class="editor-note">Zmień plan na wybrany dzień tygodnia. Zapisane zmiany obowiązują co tydzień i pozostają na tym urządzeniu.</p>
+<label class="day-picker">Dzień tygodnia<select id="edit-day"><option value="1">Poniedziałek</option><option value="2">Wtorek</option><option value="3">Środa</option><option value="4">Czwartek</option><option value="5">Piątek</option></select></label>
+<p id="lesson-count"></p><div id="edit-list"></div>
+<form id="add-lesson" novalidate><h3>Dodaj lekcję</h3>
+<label>Przedmiot<input id="lesson-name" list="subject-options" maxlength="200" autocomplete="off" placeholder="Wybierz lub wpisz nazwę"><datalist id="subject-options"></datalist></label>
+<div class="editor-times"><label>Początek<input id="lesson-start" type="time" min="06:00" step="60"></label><label>Koniec<input id="lesson-end" type="time" min="06:00" step="60"></label></div>
+<label>Sala (opcjonalnie)<input id="lesson-room" maxlength="30" autocomplete="off" placeholder="Np. 213"></label>
+<button type="submit" class="add-lesson-button">Dodaj lekcję</button></form>
+<p id="editor-error" role="alert"></p>
+<div class="editor-actions"><button id="cancel-editor" type="button">Anuluj</button><button id="save-day" type="button">Zapisz dzień</button></div>
+</section></div>
 <script src="app.js"></script></body></html>

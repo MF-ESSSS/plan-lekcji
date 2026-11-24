@@ -1,0 +1,26 @@
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
+const source=fs.readFileSync(path.join(__dirname,'../dist/app.js'),'utf8').split('const overrides=')[0];
+const jar=new Map();let blocked=false;
+const document={querySelector(){},get cookie(){return [...jar].map(([k,v])=>k+'='+v).join('; ');},set cookie(text){if(blocked)return;const [pair,...flags]=text.split('; '),at=pair.indexOf('='),k=pair.slice(0,at),v=pair.slice(at+1);if(flags.includes('Max-Age=0'))jar.delete(k);else if(pair.length<4096)jar.set(k,v);}};
+const disabledStorage={getItem(){throw Error('DOM storage disabled');},setItem(){throw Error('DOM storage disabled');},removeItem(){throw Error('DOM storage disabled');}};
+function context(){const c=vm.createContext({document,localStorage:disabledStorage,Intl,Date,innerWidth:390});vm.runInContext(source,c);return c;}
+let c=context();const run=code=>vm.runInContext(code,c);
+assert.equal(run('Object.values(DEFAULT_SCHEDULE).map(x=>x.length).join()'),'6,9,6,6,8');
+assert.equal(run('DEFAULT_SCHEDULE[1][0].start'),'07:45');assert.equal(run('DEFAULT_SCHEDULE[4][0].room'),'234');assert.equal(run('DEFAULT_SCHEDULE[5][0].room'),'');
+assert.equal(run('Object.values(DEFAULT_SCHEDULE).every(validLessons)'),true);
+run('persist(1, DEFAULT_SCHEDULE[1].slice(1))');assert.equal(run('stored(1).length'),5);
+c=context();assert.equal(run('stored(1)[0].name'),'Fizyka');assert.equal(run('stored(2)'),null);
+run('persist(1, [])');c=context();assert.equal(run('stored(1).length'),0);
+run("persist(5,Array.from({length:8},()=>L('Zażółć gęślą jaźń '.repeat(10),null,null,'123')))");assert.equal(run('stored(5).length'),8);assert.equal(run('stored(5)[0].name'), 'Zażółć gęślą jaźń '.repeat(10));
+assert([...jar.keys()].filter(k=>k.startsWith('plan_day_v1_5_')).length>1,'Long Polish names must use multiple cookies');
+const previous=jar.size;run('persist(5, [])');assert(jar.size<previous,'Old cookie chunks must be removed');
+blocked=true;assert.throws(()=>run('persist(3,[])'),/Nie udało/);blocked=false;
+assert.equal(run("completed('2026-11-24','09:20',{key:'2026-11-24',minute:559})"),false);
+assert.equal(run("completed('2026-11-24','09:20',{key:'2026-11-24',minute:560})"),true);
+assert.equal(run("completed('2026-11-25','09:20',{key:'2026-11-24',minute:1200})"),false);
+assert.equal(run("completed('2026-11-24',null,{key:'2026-11-24',minute:1200})"),false);
+assert.equal(run("validLessons([L('Test','10:00','09:00')])"),false);
+assert.equal(run("validLessons([L('Test','05:30','06:15')])"),false);
+assert.equal(run("validLessons([L('Test','25:00','26:00')])"),false);
+assert.equal(run("warsawNow(new Date('2026-11-24T23:30:00Z')).key"),'2026-11-25');
+console.log('PASS: all five schedules; cookie-only persistence with DOM storage disabled; reload, empty days, Unicode chunks, replacement cleanup, storage errors, lesson boundaries and timezone.');
