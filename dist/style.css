@@ -14,3 +14,4 @@ body{-webkit-user-select:none;user-select:none}.editor-panel input,.editor-panel
 .date-note{min-height:calc(59 * var(--u));display:flex;flex-direction:column;justify-content:center;padding:calc(4 * var(--u)) calc(8 * var(--u));line-height:1.35}.accent .day-marks>.mark:only-child{flex:0 0 100%;width:100%}
 #calendar.with-notes{padding-bottom:0}.schedule-day.has-notes{display:flex;flex-direction:column}.schedule-day.has-notes>.timeline{flex-shrink:0}.schedule-day.has-notes>.date-notes{margin-top:auto;padding-bottom:0}.schedule-day.has-notes>.date-notes>.date-note:last-child{margin-bottom:0}
 #day-notes{flex:none;position:relative;z-index:4;max-height:35svh;overflow-y:auto;background:#292735;box-shadow:0 calc(-8 * var(--u)) calc(20 * var(--u)) #3285c430;scrollbar-width:thin}#day-notes>.date-notes{padding-bottom:calc(12 * var(--u));box-shadow:none}#day-notes .date-note:last-child{margin-bottom:0}
+#scroll.day-swiping,#day-notes{touch-action:pan-y pinch-zoom}
