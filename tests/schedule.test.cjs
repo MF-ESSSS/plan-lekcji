@@ -62,4 +62,9 @@ surfaceEvents['#scrollpointerdown'](pointer(300,300));events.pointerup(pointer(1
 surfaceEvents['#scrollpointerdown'](pointer(120,300));events.pointerup(pointer(300,305));assert.equal(run('key(selected)'),'2026-11-27');
 surfaceEvents['#scrollpointerdown'](pointer(120,300));events.pointermove(pointer(125,450));events.pointerup(pointer(300,450));assert.equal(run('key(selected)'),'2026-11-27','Vertical scrolling must not change the day');
 run("view='week'");surfaceEvents['#scrollpointerdown'](pointer(300,300));events.pointerup(pointer(120,300));assert.equal(run('key(selected)'),'2026-11-27','Week view must retain its own horizontal scrolling');
-console.log('PASS: left/right swipe handlers, Friday/Monday and year boundaries, vertical-scroll and week-view guards; automatic calendar rollover, notes, and cookie-only persistence.');
+c=context();assert.equal(run("readProfileValue('plan_profile_name_v1')"),null);
+assert.equal(run("normalizeProfileName('  Jan   Żółć  ')"),'Jan Żółć');
+assert.equal(run("writeProfileValue('plan_profile_name_v1','Jan Żółć')"),true);
+assert.equal(run("writeProfileValue('plan_profile_tip_v1','1')"),true);
+c=context();assert.equal(run("readProfileValue('plan_profile_name_v1')"),'Jan Żółć');assert.equal(run("readProfileValue('plan_profile_tip_v1')"),'1');
+console.log('PASS: profile name and first-run hint persist with DOM storage disabled; swipe handlers and calendar boundaries; vertical scrolling, dated notes and schedule persistence.');
