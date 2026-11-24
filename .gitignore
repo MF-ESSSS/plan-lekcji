@@ -1,0 +1,10 @@
+android/build/
+android/*.apk
+android/*.idsig
+*.p12
+*.pem
+*.key
+*.pk8
+*password*
+*.tmp
+.DS_Store
