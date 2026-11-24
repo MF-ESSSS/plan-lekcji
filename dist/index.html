@@ -17,7 +17,18 @@
 <p id="lesson-count"></p><div id="edit-list"></div>
 <form id="add-lesson" novalidate><h3>Dodaj lekcję</h3>
 <label>Przedmiot<input id="lesson-name" list="subject-options" maxlength="200" autocomplete="off" placeholder="Wybierz lub wpisz nazwę"><datalist id="subject-options"></datalist></label>
-<div class="editor-times"><label>Początek<input id="lesson-start" type="time" min="06:00" step="60"></label><label>Koniec<input id="lesson-end" type="time" min="06:00" step="60"></label></div>
+<label>Godziny lekcji<select id="lesson-time" required>
+<option value="" disabled selected>Wybierz godziny</option>
+<option value="07:45|08:30">7:45 – 8:30</option>
+<option value="08:35|09:20">8:35 – 9:20</option>
+<option value="09:25|10:10">9:25 – 10:10</option>
+<option value="10:20|11:05">10:20 – 11:05</option>
+<option value="11:20|12:05">11:20 – 12:05</option>
+<option value="12:15|13:00">12:15 – 13:00</option>
+<option value="13:20|14:05">13:20 – 14:05</option>
+<option value="14:15|15:00">14:15 – 15:00</option>
+<option value="15:05|15:50">15:05 – 15:50</option>
+</select></label>
 <label>Sala (opcjonalnie)<input id="lesson-room" maxlength="30" autocomplete="off" placeholder="Np. 213"></label>
 <button type="submit" class="add-lesson-button">Dodaj lekcję</button></form>
 <section class="note-editor"><h3>Prace domowe i sprawdziany</h3>
