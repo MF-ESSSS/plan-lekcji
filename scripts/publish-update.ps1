@@ -37,12 +37,12 @@ try {
     $payload = [Text.Encoding]::UTF8.GetBytes("$version`n$sha")
     $signature = [Convert]::ToBase64String($rsa.SignData($payload,[Security.Cryptography.HashAlgorithmName]::SHA256,[Security.Cryptography.RSASignaturePadding]::Pkcs1))
     $bundle = Join-Path $updateFolder "$sha.zip"
-    Move-Item -LiteralPath $temporary -Destination $bundle
+    if (Test-Path -LiteralPath $bundle) { Remove-Item -LiteralPath $temporary } else { Move-Item -LiteralPath $temporary -Destination $bundle }
     $manifest = "version=$version`nsha256=$sha`nsignature=$signature`n"
     [IO.File]::WriteAllText($manifestPath,$manifest,[Text.UTF8Encoding]::new($false))
     Write-Output "Prepared signed web update $version"
     if ($Publish) {
-        git -C $root add -- dist updates android/src android/AndroidManifest.xml android/build.ps1 android/SignApk.java android/update-public.der scripts .gitignore README.md
+        git -C $root add -- dist updates android/src android/tests android/AndroidManifest.xml android/build.ps1 android/SignApk.java android/update-public.der scripts .gitignore README.md
         if ($LASTEXITCODE -ne 0) { throw 'git add failed' }
         git -C $root commit -m "Publish web update $version"
         if ($LASTEXITCODE -ne 0) { throw 'git commit failed' }

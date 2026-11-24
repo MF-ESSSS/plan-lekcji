@@ -18,12 +18,16 @@ public final class UpdateStore {
         root = new File(directory,"web-updates");
         if (!root.isDirectory() && !root.mkdirs()) throw new IOException("Cannot create update directory");
         key = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(publicKey));
-        try {
-            Properties stored = read(new FileInputStream(new File(root,"active.properties")));
-            verify(stored);
-            File candidate = new File(root,stored.getProperty("sha256"));
-            if (complete(candidate)) { active=candidate; version=Long.parseLong(stored.getProperty("version")); }
-        } catch (Exception ignored) { /* Bundled assets remain available. */ }
+        File[] markers=root.listFiles();
+        if(markers!=null)for(File marker:markers){
+            if(!marker.getName().startsWith("active-")||!marker.getName().endsWith(".properties"))continue;
+            try {
+                Properties stored = read(new FileInputStream(marker)); verify(stored);
+                long storedVersion=Long.parseLong(stored.getProperty("version"));
+                File candidate = new File(root,stored.getProperty("sha256"));
+                if (storedVersion>version&&complete(candidate)) { active=candidate; version=storedVersion; }
+            } catch (Exception ignored) { /* Use an earlier valid cache or bundled assets. */ }
+        }
     }
     public File currentDirectory() { return active; }
     private static Properties read(InputStream input) throws IOException {
@@ -98,7 +102,7 @@ public final class UpdateStore {
             if(!complete(candidate))throw new IOException("Incomplete stored update");
             File marker=new File(root,"active.next");
             try(FileOutputStream output=new FileOutputStream(marker)){manifest.store(output,null);output.getFD().sync();}
-            if(!marker.renameTo(new File(root,"active.properties")))throw new IOException("Cannot activate update");
+            if(!marker.renameTo(new File(root,"active-"+remoteVersion+".properties")))throw new IOException("Cannot activate update");
             active=candidate;version=remoteVersion;return true;
         } finally { clearStaging(staging); }
     }
