@@ -8,3 +8,4 @@ android/*.idsig
 *password*
 *.tmp
 .DS_Store
+.wrangler/

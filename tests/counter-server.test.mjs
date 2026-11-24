@@ -1,0 +1,21 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {DatabaseSync} from 'node:sqlite';
+import worker from '../counter/worker.mjs';
+test('anonymous registrations are idempotent and statistics contain no identifiers',async()=>{
+ const sqlite=new DatabaseSync(':memory:');
+ const env={DB:{exec:sql=>Promise.resolve(sqlite.exec(sql)),prepare:sql=>({bind:(...args)=>({run:()=>Promise.resolve(sqlite.prepare(sql).run(...args))}),first:()=>Promise.resolve(sqlite.prepare(sql).get())})}};
+ const call=(path,method='GET',body)=>worker.fetch(new Request('https://counter.test'+path,{method,body:body===undefined?undefined:JSON.stringify(body)}),env);
+ assert.deepEqual((await (await call('/stats')).json()).installations,0);
+ const first='11111111-1111-4111-8111-111111111111',second='22222222-2222-4222-8222-222222222222';
+ assert.equal((await call('/register','POST',{id:first})).status,200);
+ assert.equal((await call('/register','POST',{id:first})).status,200);
+ assert.equal((await (await call('/stats')).json()).installations,1);
+ await call('/register','POST',{id:second});
+ const stats=await (await call('/stats')).json();assert.equal(stats.installations,2);assert.deepEqual(Object.keys(stats).sort(),['installations','updatedAt']);
+ assert.equal((await call('/register','POST',{id:'bad-id'})).status,400);
+ assert.equal((await call('/register')).status,405);
+ assert.equal((await call('/register','POST',{id:'a'.repeat(300)})).status,413);
+ assert.equal((await (await call('/stats')).json()).installations,2);
+ sqlite.close();
+});

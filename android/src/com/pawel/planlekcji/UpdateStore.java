@@ -15,6 +15,10 @@ public final class UpdateStore {
     private volatile File active;
     private long version;
     public UpdateStore(File directory, byte[] publicKey) throws Exception {
+        this(directory,publicKey,0);
+    }
+    public UpdateStore(File directory, byte[] publicKey,long bundledVersion) throws Exception {
+        version=bundledVersion;
         root = new File(directory,"web-updates");
         if (!root.isDirectory() && !root.mkdirs()) throw new IOException("Cannot create update directory");
         key = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(publicKey));

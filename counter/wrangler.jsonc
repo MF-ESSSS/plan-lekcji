@@ -1,0 +1,6 @@
+{
+  "name": "plan-lekcji-counter",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-11-24",
+  "d1_databases": [{"binding":"DB","database_name":"plan-lekcji-installs","database_id":"bcad6135-3efd-4393-9219-38cb3d2c9532"}]
+}

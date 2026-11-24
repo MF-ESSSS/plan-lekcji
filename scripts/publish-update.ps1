@@ -42,7 +42,7 @@ try {
     [IO.File]::WriteAllText($manifestPath,$manifest,[Text.UTF8Encoding]::new($false))
     Write-Output "Prepared signed web update $version"
     if ($Publish) {
-        git -C $root add -- dist updates tests android/src android/tests android/AndroidManifest.xml android/build.ps1 android/SignApk.java android/update-public.der scripts .gitignore README.md
+        git -C $root add -- dist updates tests counter android/src android/tests android/AndroidManifest.xml android/build.ps1 android/SignApk.java android/update-public.der scripts .gitignore README.md
         if ($LASTEXITCODE -ne 0) { throw 'git add failed' }
         git -C $root commit -m "Publish web update $version"
         if ($LASTEXITCODE -ne 0) { throw 'git commit failed' }
